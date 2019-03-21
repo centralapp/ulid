@@ -1,23 +1,25 @@
 {-# LANGUAGE DeriveDataTypeable #-}
-module Data.ULID.Random (
-    ULIDRandom,
-    mkCryptoULIDRandom,
-    mkULIDRandom,
-    getULIDRandom
-) where
+
+module Data.ULID.Random
+  ( ULIDRandom(..)
+  , mkCryptoULIDRandom
+  , mkULIDRandom
+  , getULIDRandom
+  )
+where
 
 import           Control.DeepSeq
 import           Control.Monad
 import           Crypto.Random
 import           Data.Binary
 import           Data.Binary.Roll
-import qualified Data.ByteString     as BS
+import qualified Data.ByteString               as BS
 import           Data.Data
 import           Data.Word
 import           System.Random
 
 
-import qualified Data.ULID.Crockford as CR
+import qualified Data.ULID.Crockford           as CR
 
 
 newtype ULIDRandom = ULIDRandom BS.ByteString
@@ -29,16 +31,16 @@ numBytes = 10 -- 80 bits
 -- | see: https://hackage.haskell.org/package/crypto-api-0.13.2/docs/Crypto-Random.html
 mkCryptoULIDRandom :: CryptoRandomGen g => g -> Either GenError (ULIDRandom, g)
 mkCryptoULIDRandom g = do
-    (b, g2) <- genBytes numBytes g
-    return (ULIDRandom b, g2)
+  (b, g2) <- genBytes numBytes g
+  return (ULIDRandom b, g2)
 
 -- | Generate a ULID Random based on a standard random number generator.
 -- | see: https://hackage.haskell.org/package/random-1.1/docs/System-Random.html
 mkULIDRandom :: RandomGen g => g -> (ULIDRandom, g)
-mkULIDRandom g = let
-    (g1, g2) = split g
-    genbytes = (BS.pack) . take numBytes . randoms
-    in (ULIDRandom $ genbytes g, g2)
+mkULIDRandom g =
+  let (g1, g2) = split g
+      genbytes = (BS.pack) . take numBytes . randoms
+  in  (ULIDRandom $ genbytes g, g2)
 
 -- | Generate a ULID Random based on the global random number generator.
 getULIDRandom :: IO ULIDRandom
