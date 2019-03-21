@@ -23,7 +23,7 @@ import qualified Data.ULID.Crockford           as CR
 
 
 newtype ULIDRandom = ULIDRandom BS.ByteString
-    deriving (Eq, Typeable, Data)
+    deriving (Eq, Typeable, Data, Show)
 
 numBytes = 10 -- 80 bits
 
@@ -46,8 +46,8 @@ mkULIDRandom g =
 getULIDRandom :: IO ULIDRandom
 getULIDRandom = fst <$> mkULIDRandom <$> newStdGen -- Note: the call to newStdGen splits the generator, so this is safe to call multiple times
 
-instance Show ULIDRandom where
-    show (ULIDRandom r) =  (CR.encode) 16.roll.(BS.unpack) $ r
+-- instance Show ULIDRandom where
+--     show (ULIDRandom r) =  (CR.encode) 16.roll.(BS.unpack) $ r
 
 instance Read ULIDRandom where
     readsPrec _ = map (\(c,r)->(ULIDRandom $ (BS.pack) $ unroll numBytes c, r)) . (CR.decode) 16

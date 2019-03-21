@@ -20,7 +20,7 @@ numBytes = 6 -- 48 bits
 
 -- UNIX time in milliseconds
 newtype ULIDTimeStamp = ULIDTimeStamp Integer
-    deriving (Eq, Ord, Typeable, Data)
+    deriving (Eq, Ord, Typeable, Data, Show)
 
 -- | Generate a ULID Timestamp based on a specified time
 mkULIDTimeStamp
@@ -32,8 +32,8 @@ mkULIDTimeStamp = ULIDTimeStamp . round . (* 1000)
 getULIDTimeStamp :: IO ULIDTimeStamp
 getULIDTimeStamp = mkULIDTimeStamp <$> getPOSIXTime
 
-instance Show ULIDTimeStamp where
-    show (ULIDTimeStamp i) = CR.encode 10 i
+-- instance Show ULIDTimeStamp where
+--     show (ULIDTimeStamp i) = CR.encode 10 i
 
 instance Read ULIDTimeStamp where
     readsPrec _ = map (\(c,r) -> (ULIDTimeStamp c, r)) . CR.decode 10
