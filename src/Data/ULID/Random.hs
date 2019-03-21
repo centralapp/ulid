@@ -5,6 +5,7 @@ module Data.ULID.Random
   , mkCryptoULIDRandom
   , mkULIDRandom
   , getULIDRandom
+  , renderBS
   )
 where
 
@@ -46,6 +47,7 @@ mkULIDRandom g =
 getULIDRandom :: IO ULIDRandom
 getULIDRandom = fst <$> mkULIDRandom <$> newStdGen -- Note: the call to newStdGen splits the generator, so this is safe to call multiple times
 
+renderBS (ULIDRandom bs) = CR.encode 16 . roll . BS.unpack $ bs
 -- instance Show ULIDRandom where
 --     show (ULIDRandom r) =  (CR.encode) 16.roll.(BS.unpack) $ r
 
@@ -54,7 +56,7 @@ instance Read ULIDRandom where
 
 instance Binary ULIDRandom where
     put (ULIDRandom r) = mapM_ put (BS.unpack $ r)
-    get = ULIDRandom <$> (BS.pack) <$> replicateM numBytes get
+    get = ULIDRandom . BS.pack <$> replicateM numBytes get
 
 instance NFData ULIDRandom where
     rnf (ULIDRandom r) = rnf r

@@ -35,6 +35,7 @@ module Data.ULID
   , getULID
   , ulidToInteger
   , ulidFromInteger
+  , renderULID
   )
 where
 
@@ -88,6 +89,7 @@ ulidFromInteger = decode . (LBS.pack) . (unroll 16) -- 16 bytes = 128 bit
 instance Ord ULID where
     compare (ULID ts1 _) (ULID ts2 _) = compare ts1 ts2
 
+renderULID (ULID ts bs) = (renderTS ts) <> (renderBS bs)
 -- instance Show ULID where
 --     show (ULID ts bytes) = (show ts) ++ (show bytes)
 

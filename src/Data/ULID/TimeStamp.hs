@@ -3,6 +3,7 @@ module Data.ULID.TimeStamp
   ( ULIDTimeStamp(..)
   , mkULIDTimeStamp
   , getULIDTimeStamp
+  , renderTS
   )
 where
 
@@ -32,8 +33,7 @@ mkULIDTimeStamp = ULIDTimeStamp . round . (* 1000)
 getULIDTimeStamp :: IO ULIDTimeStamp
 getULIDTimeStamp = mkULIDTimeStamp <$> getPOSIXTime
 
--- instance Show ULIDTimeStamp where
---     show (ULIDTimeStamp i) = CR.encode 10 i
+renderTS (ULIDTimeStamp i) = CR.encode 10 i
 
 instance Read ULIDTimeStamp where
     readsPrec _ = map (\(c,r) -> (ULIDTimeStamp c, r)) . CR.decode 10
