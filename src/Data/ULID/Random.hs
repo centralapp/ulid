@@ -16,6 +16,7 @@ import           Data.Binary
 import           Data.Binary.Roll
 import qualified Data.ByteString               as BS
 import           Data.Data
+import           Data.Text                      ( Text )
 import           Data.Word
 import           System.Random
 
@@ -40,13 +41,14 @@ mkCryptoULIDRandom g = do
 mkULIDRandom :: RandomGen g => g -> (ULIDRandom, g)
 mkULIDRandom g =
   let (g1, g2) = split g
-      genbytes = (BS.pack) . take numBytes . randoms
+      genbytes = BS.pack . take numBytes . randoms
   in  (ULIDRandom $ genbytes g, g2)
 
 -- | Generate a ULID Random based on the global random number generator.
 getULIDRandom :: IO ULIDRandom
 getULIDRandom = fst <$> mkULIDRandom <$> newStdGen -- Note: the call to newStdGen splits the generator, so this is safe to call multiple times
 
+renderBS :: ULIDRandom -> Text
 renderBS (ULIDRandom bs) = CR.encode 16 . roll . BS.unpack $ bs
 -- instance Show ULIDRandom where
 --     show (ULIDRandom r) =  (CR.encode) 16.roll.(BS.unpack) $ r
